@@ -357,10 +357,20 @@ def run_queue_model(model_output , cases_df, w_place, w_date, params_simulation)
             
 
             #BUG:review order of magnitude of all parameters (make sure it is consistant)
-            dataset = dataset.assign(hospitalizados=round(dataset[execution_columnm]*params_simulation['confirm_admin_rate']*reported_rate/1000))
 
-            st.write("input modelo")
-            st.write(dataset.tail())
+            dataset = dataset.assign(hospitalizados=0)
+
+            for idx, row in dataset.iterrows():
+
+                if idx < cut_after:
+                    dataset['hospitalizados'].iloc[idx] = round(dataset[execution_columnm].iloc[idx] * params_simulation['confirm_admin_rate']/100)
+                else:
+                    dataset['hospitalizados'].iloc[idx] = round(dataset[execution_columnm].iloc[idx] * (params_simulation['confirm_admin_rate']/100) * (reported_rate/100))
+
+
+            # dataset = dataset.assign(hospitalizados=round(dataset[execution_columnm]*params_simulation['confirm_admin_rate']*reported_rate/1000))
+            # st.write("input modelo")
+            # st.write(dataset.tail())
 
             bar_text = st.empty()
             bar = st.progress(0)
@@ -680,10 +690,10 @@ if __name__ == '__main__':
     if use_hospital_queue:
 
         params_simulation = make_param_widgets_hospital_queue(w_place)
-        st.write(cases_df.head())
-        st.write(w_place)
-        st.write(w_date)
-        st.write(params_simulation)
+        # st.write(cases_df.head())
+        # st.write(w_place)
+        # st.write(w_date)
+        # st.write(params_simulation)
         simulation_outputs, cut_after = run_queue_model(model_output , cases_df, w_place, w_date, params_simulation)
 
         st.markdown(texts.HOSPITAL_GRAPH_DESCRIPTION)
@@ -715,6 +725,7 @@ if __name__ == '__main__':
             .set_index('Cenário')
             .to_markdown()))
 
+        st.markdown("*N/A*: não houve formação de filas por falta de leitos")
         st.markdown("### Visualizações")
 
         plot_output = pd.concat(

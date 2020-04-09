@@ -149,7 +149,6 @@ def get_state_cases_and_deaths(place):
     df = (pd.read_csv(COVID_19_BY_STATE_TOTALS_URL)
             .query("state == '"+place+"'"))
     df = df.reset_index()
-    print(df)
     deaths = df['deaths'][df.shape[0]-1]
 
 
