@@ -134,6 +134,13 @@ def get_ibge_code(city, state):
 
     return code
 
+
+def get_ibge_code_list():
+    df = pd.read_csv(IBGE_CODE_PATH)
+    codes = df['cod_ibge'].to_list()
+
+    return codes
+
 def get_city_deaths(place):
 
     df = (pd.read_csv(COVID_19_BY_CITY_TOTALS_URL)
