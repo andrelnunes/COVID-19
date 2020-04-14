@@ -3,9 +3,9 @@ import sys
 import time
 import os
 
-from simulator.covid19 import get_ibge_code_list
-from simulator.covid19.crawler_utils import get_city_beds
-from simulator.covid19.crawler_utils import get_bed_codes
+from data import get_ibge_code_list
+from crawler_utils import get_city_beds
+from crawler_utils import get_bed_codes
 
 list_city = get_ibge_code_list()
 
@@ -27,7 +27,7 @@ for codibge in list_city:
     sys.stdout.flush()
 
     # speed down the crawler
-    # time.sleep(0.1)
+    time.sleep(0.1)
 
 # convert columns
 df_beds['Existente'] = pd.to_numeric(df_beds['Existente'])
@@ -70,4 +70,4 @@ df_all = pd.merge(df_all, df_icu_beds_covid, on='codibge', how='outer')
 df_all.fillna(0, inplace=True)
 
 # save csv
-df_all.to_csv(os.path.join(os.getcwd(), 'data/csv/tmp/ibgeleitos.csv'), index=False)
+df_all.to_csv(os.path.join(os.getcwd(), 'simulator/data/ibgeleitos.csv'), index=False)
