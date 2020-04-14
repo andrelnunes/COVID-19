@@ -3,9 +3,9 @@ import sys
 import time
 import os
 
-from covid19.data import get_ibge_code_list
-from covid19.crawler_utils import get_city_beds
-from covid19.crawler_utils import get_bed_codes
+from simulator.covid19 import get_ibge_code_list
+from simulator.covid19.crawler_utils import get_city_beds
+from simulator.covid19.crawler_utils import get_bed_codes
 
 list_city = get_ibge_code_list()
 

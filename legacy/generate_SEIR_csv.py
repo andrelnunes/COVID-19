@@ -1,6 +1,6 @@
 import pandas as pd
-from covid19.models import SEIRBayes
-from covid19.data import load_cases, load_population
+from simulator.covid19 import SEIRBayes
+from simulator.covid19 import load_cases, load_population
 
 if __name__ == '__main__':
 

@@ -1,21 +1,23 @@
-import altair as alt
 import streamlit as st
-import texts
+import os
 import base64
 import pandas as pd
 import numpy as np
 import math               #### add to requirements
+from datetime import timedelta
+from json import dumps
+
+
+from st_utils.viz import make_simulation_chart
+from hospital_queue.confirmation_button import cache_on_button_press
+from hospital_queue.queue_simulation import run_queue_simulation
+from st_utils.viz import prep_tidy_data_to_plot, make_combined_chart, plot_r0
+from st_utils.formats import global_format_func
 from covid19 import data
 from covid19.models import SEIRBayes
-from hospital_queue.queue_simulation import run_queue_simulation
-from viz import prep_tidy_data_to_plot, make_combined_chart, make_simulation_chart
-from formats import global_format_func
-from hospital_queue.confirmation_button import cache_on_button_press
-from datetime import datetime, timedelta
-from viz import prep_tidy_data_to_plot, make_combined_chart, plot_r0
-from formats import global_format_func
-from json import dumps
 from covid19.estimation import ReproductionNumber
+from st_utils import texts
+
 
 FATAL_RATE_BASELINE = 0.0138 #Verity R, Okell LC, Dorigatti I et al. Estimates of the severity of covid-19 disease. medRxiv 2020.
 SAMPLE_SIZE=500
@@ -154,8 +156,8 @@ def make_param_widgets_hospital_queue(city, defaults=DEFAULT_PARAMS):
      
     def load_beds(ibge_code):
         # leitos
-        beds_data = pd.read_csv('simulator/hospital_queue/data/ibge_leitos.csv', sep = ';')
-        beds_data_filtered = beds_data[beds_data['cod_ibge']==ibge_code]
+        beds_data = pd.read_csv(os.path.join(os.getcwd(), 'simulator\data\ibge_leitos.csv'), sep =';')
+        beds_data_filtered = beds_data[beds_data['cod_ibge'] == ibge_code]
         beds_data_filtered.head()
 
         return beds_data_filtered['qtd_leitos'].values[0], beds_data_filtered['qtd_uti'].values[0]
