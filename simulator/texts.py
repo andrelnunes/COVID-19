@@ -127,3 +127,7 @@ def r0_NOT_ENOUGH_DATA(w_place, w_date): return f'''
 {w_date} para fazer a estimação. Logo, foram
 utilizados os dados agregados Brasil**
 '''
+
+r0_LESS_THAN_THRESHOLD = '''
+Não há dados suficientes para geração da estimativa de $R_{0}$, favor informar os limites a serem utilizados.
+'''

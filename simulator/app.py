@@ -150,18 +150,26 @@ def make_param_widgets(NEIR0, reported_rate, r0_samples=None, defaults=DEFAULT_P
             't_max': t_max,
             'NEIR0': (N, E0, I0, R0)}
 
-def make_param_widgets_hospital_queue(city, defaults=DEFAULT_PARAMS):
-     
-    def load_beds(ibge_code):
-        # leitos
+def make_param_widgets_hospital_queue(location, w_granularity, defaults=DEFAULT_PARAMS):
+    
+
+    def load_beds(ibge_codes):
+
         beds_data = pd.read_csv('simulator/hospital_queue/data/ibge_leitos.csv', sep = ';')
-        beds_data_filtered = beds_data[beds_data['cod_ibge']==ibge_code]
-        beds_data_filtered.head()
+        
+        ibge_codes = pd.Series(ibge_codes).rename('codes_to_filter')
+        beds_data_filtered = (beds_data[beds_data['cod_ibge'].isin(ibge_codes)]
+            [['qtd_leitos', 'qtd_uti']]
+            .sum())
 
-        return beds_data_filtered['qtd_leitos'].values[0], beds_data_filtered['qtd_uti'].values[0]
+        return beds_data_filtered['qtd_leitos'], beds_data_filtered['qtd_uti']
 
-    city, uf = city.split("/")
-    qtd_beds, qtd_beds_uci = load_beds(data.get_ibge_code(city, uf))
+    if w_granularity == 'state':
+        uf = location
+        qtd_beds, qtd_beds_uci = load_beds(data.get_ibge_codes_uf(uf))
+    else:        
+        city, uf = location.split("/")
+        qtd_beds, qtd_beds_uci = load_beds([data.get_ibge_code(city, uf)])
 
     #TODO: Adjust reliable cCFR
     #admiss_rate = FATAL_RATE_BASELINE/cCFR
@@ -363,9 +371,9 @@ def run_queue_model(model_output , cases_df, w_place, w_date, params_simulation)
             for idx, row in dataset.iterrows():
 
                 if idx < cut_after:
-                    dataset['hospitalizados'].iloc[idx] = round(dataset[execution_columnm].iloc[idx] * params_simulation['confirm_admin_rate']/100)
+                    dataset['hospitalizados'].iloc[idx] = round(dataset[execution_columnm].iloc[idx] * params_simulation['confirm_admin_rate']/reported_rate)
                 else:
-                    dataset['hospitalizados'].iloc[idx] = round(dataset[execution_columnm].iloc[idx] * (params_simulation['confirm_admin_rate']/100) * (reported_rate/100))
+                    dataset['hospitalizados'].iloc[idx] = round(dataset[execution_columnm].iloc[idx] * (params_simulation['confirm_admin_rate']/100) )
 
 
             # dataset = dataset.assign(hospitalizados=round(dataset[execution_columnm]*params_simulation['confirm_admin_rate']*reported_rate/1000))
@@ -476,14 +484,14 @@ def make_r0_widgets(defaults=DEFAULT_PARAMS):
 def estimate_subnotification(cases_df, place, date,w_granularity):
 
     if w_granularity == 'city':
-        city_deaths, city_cases = data.get_city_deaths(place)
+        city_deaths, city_cases = data.get_city_deaths(place,date)
         state = city_cases['state'][0]
         if city_deaths < MIN_DEATH_SUBN:
             place = state
             w_granularity = 'state'
 
     if w_granularity == 'state':
-        state_deaths, state_cases = data.get_state_cases_and_deaths(place)
+        state_deaths, state_cases = data.get_state_cases_and_deaths(place,date)
         if state_deaths < MIN_DEATH_SUBN:
             w_granularity = 'brazil'
 
@@ -501,7 +509,7 @@ def estimate_subnotification(cases_df, place, date,w_granularity):
 
         previous_cases = previous_cases.fillna(0)
         previous_cases = pd.DataFrame(previous_cases, columns=['newCases'])
-        deaths,cases_df = data.get_city_deaths(place)
+        deaths,cases_df = data.get_city_deaths(place,date)
 
         previous_cases['deaths'] = 0
         previous_cases['deaths'][0] = deaths
@@ -511,7 +519,7 @@ def estimate_subnotification(cases_df, place, date,w_granularity):
 
     if w_granularity == 'state':
 
-        state_deaths, cases_df = data.get_state_cases_and_deaths(place)
+        state_deaths, cases_df = data.get_state_cases_and_deaths(place,date)
         previous_cases = cases_df.sort_index(ascending=False)
         previous_cases = previous_cases.reset_index()
         total_deaths = previous_cases['deaths'][0]
@@ -522,7 +530,7 @@ def estimate_subnotification(cases_df, place, date,w_granularity):
 
     if w_granularity == 'brazil':
 
-        brazil_deaths, cases_df = data.get_brazil_cases_and_deaths()
+        brazil_deaths, cases_df = data.get_brazil_cases_and_deaths(date)
         previous_cases = cases_df.sort_index(ascending=False)
         previous_cases = previous_cases.reset_index()
         total_deaths = previous_cases['deaths'][0]
@@ -617,16 +625,28 @@ if __name__ == '__main__':
             'Qtde. de iterações da simulação (runs)',
             min_value=1, max_value=3_000, step=100,
             value=300)
+    
     st.markdown(texts.r0_ESTIMATION_TITLE)
-    should_estimate_r0 = st.checkbox(
-            'Estimar R0 a partir de dados históricos',
-            value=True)
-    if should_estimate_r0:
-        r0_samples, used_brazil = estimate_r0(cases_df,
+
+    r0_samples, used_brazil = estimate_r0(cases_df,
                                               w_place,
                                               SAMPLE_SIZE, 
                                               MIN_DAYS_r0_ESTIMATE, 
                                               w_date)
+
+    r0_dist = r0_samples[:, -1] 
+    should_use_estimated_r0 = np.mean(r0_dist) >= 1.9
+
+    if should_use_estimated_r0:
+        should_estimate_r0 = st.checkbox(
+                'Estimar R0 a partir de dados históricos',
+                value=True)
+    else:
+        st.markdown(texts.r0_LESS_THAN_THRESHOLD)
+        should_estimate_r0 = False
+
+    if should_estimate_r0:
+        
         if used_brazil:
             st.write(texts.r0_NOT_ENOUGH_DATA(w_place, w_date))
                        
@@ -689,11 +709,7 @@ if __name__ == '__main__':
 
     if use_hospital_queue:
 
-        params_simulation = make_param_widgets_hospital_queue(w_place)
-        # st.write(cases_df.head())
-        # st.write(w_place)
-        # st.write(w_date)
-        # st.write(params_simulation)
+        params_simulation = make_param_widgets_hospital_queue(w_place, w_granularity)
         simulation_outputs, cut_after = run_queue_model(model_output , cases_df, w_place, w_date, params_simulation)
 
         st.markdown(texts.HOSPITAL_GRAPH_DESCRIPTION)
