@@ -15,8 +15,7 @@ def eir0(EIR,population):
     I0 = 0
     R0 = 0
 
-    st.write(EIR)
-    st.write(population)
+    
 
     pct = EIR / population
     df = pd.read_excel('simulator/data/SEIR0_estimate.xlsx')
@@ -32,8 +31,6 @@ def eir0(EIR,population):
         I0 = EIR
         E0 = 2*I0
         R0 = 0
-
-    st.write(E0,I0,R0)
 
     return E0,I0,R0
 
