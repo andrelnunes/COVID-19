@@ -92,7 +92,7 @@ def make_date_options(cases_df, place):
             .strftime('%Y-%m-%d'))
 
 def make_param_widgets(NEIR0, reported_rate, r0_samples=None, defaults=DEFAULT_PARAMS):
-    _N0, _E0, _I0, _R0 = map(int, NEIR0)
+    _N0, _EIR0 = map(int, NEIR0)
     interval_density = 0.95
     family = 'lognorm'
 
@@ -106,18 +106,11 @@ def make_param_widgets(NEIR0, reported_rate, r0_samples=None, defaults=DEFAULT_P
                                 min_value=0, max_value=1_000_000_000, step=500_000,
                                 value=_N0)
 
-    E0 = st.sidebar.number_input('Indivíduos expostos inicialmente (E0)',
+    EIR0 = st.sidebar.number_input('Indivíduos que já foram infectados e confirmados',
                                  min_value=0, max_value=1_000_000_000,
-                                 value=_E0)
+                                 value=_EIR0)
 
-    I0 = st.sidebar.number_input('Indivíduos infecciosos inicialmente (I0)',
-                                 min_value=0, max_value=1_000_000_000,
-                                 value=_I0)
-
-    R0 = st.sidebar.number_input('Indivíduos removidos com imunidade inicialmente (R0)',
-                                 min_value=0, max_value=1_000_000_000,
-                                 value=_R0)
-
+    
     st.sidebar.markdown('#### Período de infecção (1/γ) e tempo incubação (1/α)') 
 
     gamma_inf = st.sidebar.number_input(
@@ -150,7 +143,7 @@ def make_param_widgets(NEIR0, reported_rate, r0_samples=None, defaults=DEFAULT_P
             'alpha_inv_dist': (alpha_inf, alpha_sup, interval_density, family),
             'gamma_inv_dist': (gamma_inf, gamma_sup, interval_density, family),
             't_max': t_max,
-            'NEIR0': (N, E0, I0, R0)}
+            'NEIR0': (N, EIR0)}
 
 def make_param_widgets_hospital_queue(city, defaults=DEFAULT_PARAMS):
      
@@ -271,13 +264,16 @@ def make_param_widgets_hospital_queue(city, defaults=DEFAULT_PARAMS):
             "available_rate_icu": available_rate_icu
             }
 
+
 @st.cache
-def make_NEIR0(cases_df, population_df, place, date):
+def make_NEIR0(cases_df, population_df, place, date,reported_rate):
+
     N0 = population_df[place]
-    I0 = cases_df[place]['totalCases'][date]
-    E0 = 2*I0
-    R0 = 0
-    return (N0, E0, I0, R0)
+    EIR = cases_df[place]['totalCases'][date]
+    
+    return (N0, EIR)
+
+
 
 def make_download_href(df, params, should_estimate_r0, r0_dist):
     _params = {
@@ -615,7 +611,7 @@ if __name__ == '__main__':
                                   index=len(options_date)-1)
 
     reported_rate,cCFR = estimate_subnotification(cases_df, w_place, w_date, w_granularity)
-    NEIR0 = make_NEIR0(cases_df, population_df, w_place, w_date)
+    NEIR0 = make_NEIR0(cases_df, population_df, w_place, w_date,reported_rate)
     # w_show_uncertainty = st.checkbox('Mostrar intervalo de confiança', 
     #                                  value=True)
     w_show_uncertainty = True
