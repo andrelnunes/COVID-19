@@ -18,7 +18,7 @@ from covid19.models import SEIRBayes
 from covid19.estimation import ReproductionNumber
 
 
-FATAL_RATE_BASELINE = 0.0138  # Verity R, Okell LC, Dorigatti I et al. Estimates of the severity of covid-19 disease. \
+FATAL_RATE_BASELINE = 0.00657  # Verity R, Okell LC, Dorigatti I et al. Estimates of the severity of covid-19 disease. \
 # medRxiv 2020.
 SAMPLE_SIZE=500
 MIN_CASES_TH = 10
@@ -101,7 +101,7 @@ def make_param_widgets(NEIR0, reported_rate, r0_samples=None, defaults=DEFAULT_P
     family = 'lognorm'
 
     fator_subr = st.sidebar.number_input(
-            'Taxa de reportagem de infectados. Porcentagem dos infectados que testaram positivo',
+            'Porcentagem dos infectados que testaram positivo, entre sintomáticos e assintomáticos',
             min_value=0.0, max_value=100.0, step=1.0,
             value=reported_rate)
 
@@ -162,12 +162,16 @@ def make_param_widgets_hospital_queue(location, w_granularity, defaults=DEFAULT_
 
         return beds_data_filtered['qtd_leitos'], beds_data_filtered['qtd_uti']
 
+    confirm_admin_rate = DEFAULT_PARAMS['confirm_admin_rate']*100
+
     if w_granularity == 'state':
         uf = location
         qtd_beds, qtd_beds_uci = load_beds(data.get_ibge_codes_uf(uf))
+        confirm_admin_rate = 100*data.state_hospitalization(uf)       #stand-by
     else:
         city, uf = location.split("/")
         qtd_beds, qtd_beds_uci = load_beds([data.get_ibge_code(city, uf)])
+        confirm_admin_rate = data.city_hospitalization(city,uf)       #stand-by
 
     # TODO: Adjust reliable cCFR
     # admiss_rate = FATAL_RATE_BASELINE/cCFR
@@ -180,7 +184,8 @@ def make_param_widgets_hospital_queue(location, w_granularity, defaults=DEFAULT_
              step=1.0,
              min_value=0.0,
              max_value=100.0,
-             value=DEFAULT_PARAMS['confirm_admin_rate']*100)
+             value=confirm_admin_rate*100)
+             #value=confirm_admin_rate
 
     los_covid = st.sidebar.number_input(
             'Tempo de estadia médio no leito comum (dias)',
