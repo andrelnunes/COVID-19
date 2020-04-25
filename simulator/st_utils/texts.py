@@ -1,19 +1,17 @@
 INTRODUCTION = '''
-# COLETIVO COVID-19-BR
-O objetivo deste projeto é iniciar uma força tarefa conjunta da comunidade científica e tecnológica a fim de criar modelos de previsão de infectados (e talvez outras métricas) pelo COVID-19, focando no Brasil. O projeto é público e pode ser usado por todos.
+# COLETIVO COVID-19BR
+
+O objetivo de montar esta força tarefa conjunta da comunidade científica e tecnológica brasileira é colaborar com o planejamento e evitar catástrofes maiores. 
+
+Através da modelagem é possível prever o colapso do sistema de saúde e o crescimento de casos. Assim, auxiliar as políticas públicas. No entanto o projeto é público e pode ser usado por todos. Temos uma equipe pronta para assessorar governadores, prefeituras e secretarias de saúde. Além de ligada com a imprensa nacional levando informação do gestor da área de saúde à população. 
+
+Para dúvidas e contribuições, entre em contato por [email](mailto:covid19br.site@gmail.com?subject=[Dúvidas%20e%20Contribuições]%20Modelos%20COVID19).
+
+Para mais detalhes sobre o modelo acesse a nossa [Nota Técnica](https://drive.google.com/file/d/1Ja2GlssYnw2arOyXmV92zaEGKryM5Sax/view)
 
 **Como começar:** no menu da barra à esquerda, selecione as projeções que deseja visualizar e altere os parâmetros para simular diferentes cenários.
 
-#### Para dúvidas e contribuições, entre em contato por [email](mailto:covid19br.site@gmail.com?subject=[Dúvidas%20e%20Contribuições]%20Modelos%20COVID19).
----
 '''
-NOTA_TECNICA = '''
-**Nota Técnica:** Entenda os modelos matemáticos utilizados para as simulações [aqui](https://drive.google.com/file/d/1wMqx9NB-xnD77GM64pfTCZ2kXvs9_7mH/view).
-
-'''
-# INTRODUCTION = '''
-# No menu da barra à esquerda, selecione as projeções que deseja visualizar e altere os parâmetros para simular diferentes cenários.
-# '''
 
 PARAMETER_SELECTION='''
 # Seleção de parâmetros
