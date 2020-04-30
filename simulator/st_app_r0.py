@@ -6,12 +6,15 @@ from st_utils.viz import plot_r0
 from models.reproduction_number import ReproductionNumber
 from models.reproduction_number import RNDefaults as rnd
 
+from covid19.regressions import spline_poisson
+
 SAMPLE_SIZE = 500
 
 def prepare_for_r0_estimation(df):
+    df = spline_poisson(df,'newCases')
     return (
             df
-            ['newCases']
+            ['newCases_regression']
             .asfreq('D')
             .fillna(0)
             .rename('incidence')
