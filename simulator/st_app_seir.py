@@ -242,7 +242,7 @@ def build_seir(w_date,
                                     w_params = w_params,
                                     sample_size = sample_size,
                                     reported_rate = w_params['fator_subr'],
-                                    NEIR0=NEIR0)
+                                    NEIR0=w_params['NEIR0'])
 
     model, model_output, _ , _ = model_info
 
