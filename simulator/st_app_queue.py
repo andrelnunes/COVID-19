@@ -12,7 +12,7 @@ from st_utils.viz import make_simulation_chart, make_simulation_chart_ocup_rate
 from st_utils import texts  
 from hospital_queue.queue_simulation import run_queue_simulation
 
-MIN_DATA_BRAZIL = '2020-03-26'
+MIN_DATA_BRAZIL = '2020-02-25'
 
 DEFAULT_PARAMS = {'confirm_admin_rate': .07,  
     'length_of_stay_covid': 9,

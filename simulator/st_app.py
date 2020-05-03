@@ -112,9 +112,10 @@ if __name__ == '__main__':
     if base_parameters['r0_model']:
         my_placeholder.markdown("")
 
-        r0_samples, used_brasil = st_app_r0.build_r0(base_parameters['date'],
+        r0_samples, place = st_app_r0.build_r0(base_parameters['date'],
                                                      base_parameters["location"],
-                                                     base_parameters["cases"])
+                                                     base_parameters["cases"],
+                                                     base_parameters["location_granularity"])
     
     if base_parameters['seir_model']:
         my_placeholder.markdown("")
