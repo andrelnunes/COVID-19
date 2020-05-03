@@ -89,7 +89,7 @@ def build_r0(w_date,
     else:
         location = place
 
-    st.markdown(texts.r0_WARNING)
+    #st.markdown(texts.r0_WARNING)
     st.altair_chart(plot_r0(r0_samples,
                             w_date, 
                             location,
