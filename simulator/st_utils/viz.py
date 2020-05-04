@@ -307,6 +307,8 @@ def plot_r0(r0_samples, date, place, min_days):
               .rename(columns={'level_1': 'Dias',
                                0: 'r0'})
               [['Dias', 'r0']])
+    
+
     line = (
         alt
         .Chart(
