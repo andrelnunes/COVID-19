@@ -26,19 +26,22 @@ def prepare_for_r0_estimation(df):
             .set_index('dates')
     )
 
-def load_incidence_by_location(cases_df, date, location, w_granularity,min_casest_th):
+def load_incidence_by_location(cases_df, date, location, real_cases,min_casest_th):
     
-    df,place = ur.estimate_subnotification(location, date,w_granularity,period=True)
+    df,place = real_cases
     df = df.reset_index()
     
     #df.plot(kind='line',x='index',y=['newCases','newCases_regression'])
     #plt.savefig("newCases.png")
 
+    #df.plot(kind='line',x='index',y=['newCases','newCases_regression','real_newCases'])
+    #plt.savefig("real_newCases.png")
+
     #df.plot(kind='line',x='index',y=['cum_subn'])
     #plt.savefig("cum_subn.png")
 
 
-    return df.pipe(prepare_for_r0_estimation) , place
+    return df.pipe(prepare_for_r0_estimation) ,place
     
 
 #def load_incidence(cases_df):
@@ -51,12 +54,12 @@ def load_incidence_by_location(cases_df, date, location, w_granularity,min_cases
 def estimate_r0(w_date,
                 w_location,
                 cases_df,
-                w_granularity):
+                real_cases):
     
     incidence,place = load_incidence_by_location(cases_df,
                                                 w_date,
                                                 w_location,
-                                                w_granularity,
+                                                real_cases,
                                                 rnd.MIN_CASES_TH)
 
 
@@ -75,13 +78,13 @@ def estimate_r0(w_date,
 def build_r0(w_date,
              w_location,
              cases_df,
-             w_granularity):
+             real_cases):
     
     st.markdown("# Número de reprodução básico")
     r0_samples, place = estimate_r0(w_date,
                                           w_location,
                                           cases_df,
-                                          w_granularity)
+                                          real_cases)
 
     if place != w_location:
         st.write(texts.r0_NOT_ENOUGH_DATA(w_location, w_date,place))

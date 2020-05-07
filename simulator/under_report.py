@@ -6,7 +6,7 @@ import streamlit as st
 from covid19 import data
 from covid19.regressions import spline_poisson
 
-MIN_DEATH_SUBN = 10
+MIN_DEATH_SUBN = 5
 MIN_DATA_BRAZIL = '2020-03-26'
 FATAL_RATE_BASELINE = 0.00657 
 
