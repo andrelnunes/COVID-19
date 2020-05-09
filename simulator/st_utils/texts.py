@@ -13,6 +13,14 @@ Para mais detalhes sobre o modelo acesse a nossa [Nota Técnica](https://drive.g
 
 '''
 
+new_INTRODUCTION = '''
+
+### **Como começar**:
+
+No menu da barra à esquerda, selecione as projeções que deseja visualizar e altere os parâmetros para simular diferentes cenários.
+
+'''
+
 PARAMETER_SELECTION='''
 # Seleção de parâmetros
 Para simular outros cenários, altere um parâmetro e tecle **Enter**. O novo resultado será calculado e apresentado automaticamente.
