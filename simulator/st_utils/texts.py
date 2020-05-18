@@ -124,6 +124,7 @@ DATA_SOURCES = '''
 * Casos confirmados por município: [Número de casos confirmados de COVID-19 no Brasil](https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv) (de https://github.com/wcota/covid19br)
 * Casos confirmados por estado: [Painel de casos de doença pelo coronavírus 2019 (COVID-19) no Brasil pelo Ministério da Saúde](https://covid.saude.gov.br/)
 * População: Estimativa IBGE de 01/07/2019 (disponível em: [IBGE - Estimativas da população](https://www.ibge.gov.br/estatisticas/sociais/populacao/9103-estimativas-de-populacao.html))
+* Taxa de fatalidade entre os infectados por estado: [Report 21 Imperial College London](https://www.imperial.ac.uk/media/imperial-college/medicine/mrc-gida/2020-05-08-COVID19-Report-21.pdf), considerando matrix de contato referente ao Peru e correção para a renda per capita mensal. (Disponível em https://github.com/ImperialCollegeLondon/covid19model/tree/master/Brazil/data)
 '''
 
 r0_ESTIMATION_TITLE = '## Número de reprodução básico $R_{{0}}$'
