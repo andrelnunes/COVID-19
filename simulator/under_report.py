@@ -79,7 +79,7 @@ def subnotification(cases,period=False):
         #cases = spline_poisson(cases,'cum_subn')  #regressão ruim
         cases = spline_poisson(cases,'newCases')  
         cases['real_newCases'] = 0
-        
+        np.random.seed(0)
         for i in range(1,cases.shape[0]):
             subn_i = cases['cum_subn'].iloc[i]
             subn_i_less_1 = cases['cum_subn'].iloc[i-1]
