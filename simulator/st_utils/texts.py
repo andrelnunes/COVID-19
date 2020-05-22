@@ -134,7 +134,7 @@ r0_WARNING = '''
 
 def r0_ESTIMATION(place, date): return  f'''
 
-O valor do número de reprodução básico $R_{0}$ está sendo estimado com os dados históricos de {place} com dados de {date}.
+O valor do número de reprodução básico $R_{{t}}$ está sendo estimado com os dados históricos de {place} com dados de {date}.
 '''
 
 SEIRBAYES_DESC = '''

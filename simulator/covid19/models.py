@@ -173,7 +173,7 @@ class SEIRBayes:
         cEIR0 = (100/fator_subr)*EIR0
         S0 = N - cEIR0 
         #E0, I0, R0 = eir0(cEIR0, N)
-        E0, I0, R0 = generate_eir0(cEIR0,real_cases,N)
+        E0, I0, R0 = generate_eir0(cEIR0,real_cases,N,alpha_inv_dist,gamma_inv_dist)
 
 
 
@@ -299,20 +299,21 @@ class SEIRBayes:
         else:
             return S, E, I, R, t_space
 
-def generate_eir0(cEIR0,real_cases,population):
+def generate_eir0(cEIR0,real_cases,population,alpha_inv_dist,gamma_inv_dist):
 
 
     S = population
     E = 0
     I = 0
     R = 0
-    te = 5.5        #mean incubation period
-    ti = 10.5       #mean infection period
-
+    
+    te = alpha_inv_dist.mean()
+    ti = gamma_inv_dist.mean()
     
     real_cases_df, place = real_cases
 
     for i in range(real_cases_df.shape[0]):
+
         newly_infected = real_cases_df["real_newCases"].iloc[i]
         S  += -newly_infected
         E  += newly_infected - E/te
