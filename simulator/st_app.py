@@ -98,7 +98,11 @@ def create_basic_sidebar():
                                   format_func=format_date)
 
     real_cases = ur.estimate_subnotification(w_location,w_date,w_location_granularity,period=True)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> e08366fc5c704d65cbc063b9f41a7462b64e35f1
     return {"location_granularity": w_location_granularity,
             "date": w_date,
             "location": w_location,
