@@ -79,11 +79,7 @@ def subnotification(cases,period=False):
         #cases = spline_poisson(cases,'cum_subn')  #regressão ruim
         cases = spline_poisson(cases,'newCases')  
         cases['real_newCases'] = 0
-<<<<<<< HEAD
         np.random.seed(0)
-=======
-        
->>>>>>> e08366fc5c704d65cbc063b9f41a7462b64e35f1
         for i in range(1,cases.shape[0]):
             subn_i = cases['cum_subn'].iloc[i]
             subn_i_less_1 = cases['cum_subn'].iloc[i-1]
@@ -95,6 +91,7 @@ def subnotification(cases,period=False):
 
 
 def estimate_subnotification(place, date,w_granularity,period=False):
+    w_granularity = "floripa"
 
     if w_granularity == 'city':
         city_deaths = data.get_city_deaths(place,date)
@@ -138,5 +135,19 @@ def estimate_subnotification(place, date,w_granularity,period=False):
             return subnotification(previous_days)
         else:
             return subnotification(previous_days,period=True),place
+
+    if w_granularity == 'floripa':
+
+        previous_days = data.get_floripa_previous_days(date)
+        previous_days = previous_days.sort_index(ascending=False)
+        previous_days = spline_poisson(previous_days,'newCases')
+        #previous_days["newCases_regression"] = previous_days["newCases"]
+        previous_days["real_newCases"] = previous_days["newCases_regression"]
+        previous_days["cum_subn"] = 1
+
+        if not period:
+            return 1.0,FATAL_RATE_BASELINE
+        else:
+            return previous_days,place
 
 

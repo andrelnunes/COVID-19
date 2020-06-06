@@ -9,8 +9,10 @@ COVID_19_BY_CITY_TOTALS_URL = 'https://raw.githubusercontent.com/wcota/covid19br
                                'master/cases-brazil-cities.csv'
 COVID_19_BY_STATE_URL = 'https://raw.githubusercontent.com/wcota/covid19br/'\
                         'master/cases-brazil-states.csv'
-COVID_19_BY_STATE_TOTALS_URL = ('https://raw.githubusercontent.com/wcota/covid19br/'
+COVID_19_BY_STATE_TOTALS_URL = ('https://raw.githubusercontent.com/wcota/covid19br/'\
                                 'master/cases-brazil-states.csv')
+COVID_19_BY_FLORIPA_URL = ('https://raw.githubusercontent.com/lpgarcia18/covid_florianopolis/'\
+                                'master/dados/covid_preditos.csv')
 IBGE_POPULATION_PATH = DATA_DIR / 'ibge_population.csv'
 IBGE_CODE_PATH = DATA_DIR / 'ibge_city_state.csv'
 
@@ -59,6 +61,7 @@ def load_cases(by):
               .swaplevel(axis=1)
               .fillna(0)
               .astype(int))
+
 
 
 def load_population(by):
@@ -179,6 +182,17 @@ def get_brazil_previous_days(date):
     previous = previous.reset_index(drop=True)
 
     
+    return previous
+
+def get_floripa_previous_days(date):
+
+    previous = (pd.read_csv(COVID_19_BY_FLORIPA_URL)
+          .query("DADOS == 'Totais' and INICIO_SINTOMAS <='"+date+"'"))
+
+    previous = previous.rename(columns={"INICIO_SINTOMAS":"date","CASOS":"newCases","CUM_CASOS":"Cases"})
+
+    previous = previous.reset_index(drop=True)
+
     return previous
 
 
