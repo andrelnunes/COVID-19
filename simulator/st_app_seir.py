@@ -59,7 +59,7 @@ def make_NEIR0(cases_df, population_df, place, date,reported_rate):
 
     N0 = population_df[place]
     EIR = cases_df[place]['totalCases'][date]
-    
+
     return (N0, EIR)
 
 def make_download_href(df, params, should_estimate_r0, r0_dist):
@@ -218,7 +218,17 @@ def build_seir(w_date,
     reported_rate, cCFR = estimate_subnotification(w_location,
                                                    w_date,
                                                    w_location_granulariy)
+
+    
     NEIR0 = make_NEIR0(cases_df, population_df, w_location, w_date, reported_rate)
+
+    if w_location == 'Florianópolis/SC':
+        N, _ = NEIR0
+        real_cases_df, _ = real_cases
+        max_date = real_cases_df['date'].max()
+        cases = real_cases_df[real_cases_df['date'] == max_date]['Cases'].iloc[0]        
+        NEIR0 = (N, cases) 
+
     reported_rate = reported_rate * 100
 
     w_params = make_param_widgets(NEIR0, reported_rate)

@@ -14,7 +14,7 @@ import under_report as ur
 def create_basic_sidebar(): 
 
     MIN_DATA_BRAZIL = '2020-03-26'
-    DEFAULT_CITY = 'São Paulo/SP'
+    DEFAULT_CITY = 'Florianópolis/SC'
     DEFAULT_STATE = 'SP'
     MIN_CASES_TH = 10
 
@@ -65,7 +65,6 @@ def create_basic_sidebar():
         format_func=format_local)
 
     cases_df = data.load_cases(w_location_granularity)
-    
 
     if w_location_granularity == 'city':
 
@@ -91,7 +90,14 @@ def create_basic_sidebar():
             options=options_place,
             index=index)
 
-    options_date = make_date_options(cases_df, w_location)
+    if w_location == "Florianópolis/SC":
+        options_date = (data
+            .get_floripa_previous_days(datetime.today().strftime("%Y-%m-%d"))
+            .set_index('date')
+            .index)
+    else:
+        options_date = make_date_options(cases_df, w_location)
+
     w_date = st.sidebar.selectbox('Data',
                                   options=options_date,
                                   index=len(options_date)-1,
@@ -118,7 +124,6 @@ if __name__ == '__main__':
 
     if base_parameters['r0_model']:
         my_placeholder.markdown("")
-
         r0_samples, place = st_app_r0.build_r0(base_parameters['date'],
                                                      base_parameters["location"],
                                                      base_parameters["cases"],
@@ -132,7 +137,7 @@ if __name__ == '__main__':
                                                   base_parameters["location"],
                                                   base_parameters["cases"],
                                                   base_parameters['real_cases'])
-    
+
         seir_output, reported_rate = st_app_seir.build_seir(base_parameters['date'],
                                                             base_parameters["location"],
                                                             base_parameters["cases"],

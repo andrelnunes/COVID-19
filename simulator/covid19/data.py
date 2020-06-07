@@ -187,10 +187,13 @@ def get_brazil_previous_days(date):
 def get_floripa_previous_days(date):
 
     previous = (pd.read_csv(COVID_19_BY_FLORIPA_URL)
-          .query("DADOS == 'Totais' and INICIO_SINTOMAS <='"+date+"'"))
+          .query(f"DADOS == 'Totais' and INICIO_SINTOMAS <='{date}'"))
 
-    previous = previous.rename(columns={"INICIO_SINTOMAS":"date","CASOS":"newCases","CUM_CASOS":"Cases"})
 
+    previous = previous.rename(columns={"INICIO_SINTOMAS":"date",
+                                       "MEDIANA_CASOS":"newCases"})
+
+    previous = previous.assign(Cases=previous['newCases'].cumsum())
     previous = previous.reset_index(drop=True)
 
     return previous

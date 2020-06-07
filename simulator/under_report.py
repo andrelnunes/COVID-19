@@ -91,7 +91,20 @@ def subnotification(cases,period=False):
 
 
 def estimate_subnotification(place, date,w_granularity,period=False):
-    w_granularity = "floripa"
+
+    if w_granularity == 'city' and place == 'Florianópolis/SC':
+
+        previous_days = data.get_floripa_previous_days(date)
+        previous_days = previous_days.sort_index(ascending=False)
+        previous_days = spline_poisson(previous_days,'newCases')
+        #previous_days["newCases_regression"] = previous_days["newCases"]
+        previous_days["real_newCases"] = previous_days["newCases_regression"]
+        previous_days["cum_subn"] = 1
+
+        if not period:
+            return 1.0,FATAL_RATE_BASELINE
+        else:
+            return previous_days,place
 
     if w_granularity == 'city':
         city_deaths = data.get_city_deaths(place,date)
@@ -135,19 +148,3 @@ def estimate_subnotification(place, date,w_granularity,period=False):
             return subnotification(previous_days)
         else:
             return subnotification(previous_days,period=True),place
-
-    if w_granularity == 'floripa':
-
-        previous_days = data.get_floripa_previous_days(date)
-        previous_days = previous_days.sort_index(ascending=False)
-        previous_days = spline_poisson(previous_days,'newCases')
-        #previous_days["newCases_regression"] = previous_days["newCases"]
-        previous_days["real_newCases"] = previous_days["newCases_regression"]
-        previous_days["cum_subn"] = 1
-
-        if not period:
-            return 1.0,FATAL_RATE_BASELINE
-        else:
-            return previous_days,place
-
-
