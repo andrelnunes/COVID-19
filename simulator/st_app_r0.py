@@ -110,10 +110,10 @@ def build_r0(w_date,
 
     for i in range(np.shape(re_mean)[0]):
         real_cases[0]['Re'].iloc[real_cases[0].shape[0]-i-1] = re_mean[np.shape(re_mean)[0]-i-1]
-    st.write(np.mean(r0_samples,axis=0))
-    st.write(real_cases[0])
+    # st.write(np.mean(r0_samples,axis=0))
+    # st.write(real_cases[0])
 
-    real_cases[0].to_csv('Re.csv')
+    # real_cases[0].to_csv('Re.csv')
 
 
     return r0_samples, place
